@@ -1,5 +1,5 @@
 import * as readline from "node:readline";
-import { parse } from "path";
+import { parse, resolve } from "path";
 import {
   UP_DIRECTORY_COMMAND,
   DEFAULT_PROMPT,
@@ -19,6 +19,7 @@ import {
   COMPRESS,
   DECOMPRESS,
   EXIT,
+  DIRECTORY_IS_NOT_EXIST,
 } from "./../constants/global.js";
 import { list } from "../commands/list.js";
 import { access } from "node:fs";
@@ -31,6 +32,8 @@ import { osCommands } from "../commands/osCommands.js";
 import { calculateHash } from "../commands/calculateHash.js";
 import { compress } from "../commands/compress.js";
 import { decompress } from "../commands/decompress.js";
+import { getCurrentDirPath, setCurrentDirPath } from '../utils/navigation.js';
+import { existsSync } from 'fs'
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -38,144 +41,107 @@ const rl = readline.createInterface({
   prompt: DEFAULT_PROMPT,
 });
 
-export function runCommandSelector(userName, homeDirectory) {
+export async function runCommandSelector(userName) {
   rl.prompt();
-  let currentDirectory = parse(homeDirectory);
 
-  rl.on("line", (line) => {
-    const { dir, base } = currentDirectory;
+  rl.on("line", async (line) => {
+    const currentDirectory = await getCurrentDirPath();
+    const { dir, base } = parse(currentDirectory);
 
     const command = line.split(" ")[0];
-    const firstParam = line.split(" ")[1];
-    const secondParam = line.split(" ")[2];
+
+    const params = line.split(" ").slice(1).join(" ")
+    const firstParam = params.split(" ")[0];
+    const secondParam = params.split(" ")[1];
 
     switch (command) {
       case UP_DIRECTORY_COMMAND:
-        currentDirectory = parse(dir);
+        setCurrentDirPath(dir);
+
         console.log(CURRENT_PATH_MESSAGE + dir);
         break;
 
       case CHANGE_DIRECTORY:
-        access(firstParam, () => {
-          currentDirectory = parse(dir + "\\" + base + "\\" + firstParam);
-          console.log(
-            CURRENT_PATH_MESSAGE +
-              currentDirectory.dir +
-              "\\" +
-              currentDirectory.base
-          );
+        access(params, () => {
+          const newPath = resolve(currentDirectory, params);
+          const isDirExist = existsSync(newPath);
+
+          if (isDirExist) {
+            setCurrentDirPath(newPath);
+
+            console.log(CURRENT_PATH_MESSAGE + newPath);
+          } else {
+            console.error(DIRECTORY_IS_NOT_EXIST);
+            console.log(CURRENT_PATH_MESSAGE + currentDirectory);
+          }
         });
         break;
 
       case DIRECTORY_LIST:
-        list(dir + "//" + base);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        list(currentDirectory);
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case READ_FILE:
-        read(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        read(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case CREATE_FILE:
-        create(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        create(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case RENAME_FILE:
-        rename(dir + "\\" + base + "\\" + firstParam, secondParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        rename(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case COPY_FILE:
-        copy(dir + "\\" + base + "\\" + firstParam, secondParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case MOVE_FILE:
-        copy(dir + "\\" + base + "\\" + firstParam);
-        remove(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
+        remove(resolve(currentDirectory, firstParam));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case REMOVE_FILE:
-        remove(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        remove(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case OPERATING_SYSTEM:
         osCommands(firstParam.slice(2));
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case GET_HASH:
-        calculateHash(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        calculateHash(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case COMPRESS:
-        compress(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        compress(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case DECOMPRESS:
-        decompress(dir + "\\" + base + "\\" + firstParam);
-        console.log(
-          CURRENT_PATH_MESSAGE +
-            currentDirectory.dir +
-            "\\" +
-            currentDirectory.base
-        );
+        decompress(resolve(currentDirectory, params));
+
+        console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case EXIT:

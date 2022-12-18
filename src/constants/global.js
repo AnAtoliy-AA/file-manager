@@ -25,3 +25,4 @@ export const WRONG_COMMAND = "Invalid input";
 export const DEFAULT_PROMPT = "Write your command here> ";
 export const ERROR_MESSAGE = "Operation failed";
 export const EXIT_MESSAGE = "Thank you for using File Manager, ";
+export const DIRECTORY_IS_NOT_EXIST = 'Please, check destination directory name';

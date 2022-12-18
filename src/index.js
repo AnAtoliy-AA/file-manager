@@ -4,8 +4,8 @@ import {
   CURRENT_PATH_MESSAGE,
 } from "./constants/global.js";
 import { homedir } from "os";
-import { getFilePath } from "./utils/getFilePath.js";
 import { runCommandSelector } from "./commandSelector/commandSelector.js";
+import { setCurrentDirPath } from './utils/navigation.js';
 
 const processArguments = process.argv.slice(2);
 
@@ -21,11 +21,10 @@ const { userName } = processArguments.reduce(
 );
 
 const homeDirectory = homedir();
+setCurrentDirPath(homeDirectory);
 
 console.log(WELCOME_MESSAGE_TEXT + userName + "!");
 console.log(homedir());
 console.log(CURRENT_PATH_MESSAGE + homeDirectory);
 
-// console.log(getFilePath(import.meta.url, ["constants", "global.js"]));
-
-runCommandSelector(userName, homeDirectory);
+runCommandSelector(userName);
