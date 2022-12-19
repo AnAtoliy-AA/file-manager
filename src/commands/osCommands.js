@@ -5,7 +5,7 @@ import {
   OPERATING_SYSTEM_HOMEDIR,
   OPERATING_SYSTEM_USERNAME,
 } from "../constants/global.js";
-import { EOL, cpus, homedir, userInfo, platform } from "os";
+import { EOL, cpus, homedir, userInfo, arch } from "os";
 
 export const osCommands = async (command) => {
   switch (command) {
@@ -19,7 +19,7 @@ export const osCommands = async (command) => {
       console.log(homedir());
       break;
     case OPERATING_SYSTEM_ARCHITECTURE:
-      console.log(platform());
+      console.log(arch());
       break;
     case OPERATING_SYSTEM_USERNAME:
       console.log(userInfo().username);

@@ -102,13 +102,13 @@ export async function runCommandSelector(userName) {
         break;
 
       case COPY_FILE:
-        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
+        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam), firstParam);
 
         console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case MOVE_FILE:
-        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
+        copy(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam), firstParam);
         remove(resolve(currentDirectory, firstParam));
 
         console.log(CURRENT_PATH_MESSAGE + currentDirectory);

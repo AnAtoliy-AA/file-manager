@@ -1,22 +1,30 @@
-import { mkdirSync, readdirSync, lstatSync, copyFileSync } from "fs";
-import path from "path";
+import { mkdirSync, readdirSync, lstatSync, existsSync } from "fs";
+import { cp } from "fs/promises";
+import path, { resolve } from "path";
+import { GLOBAL_ERROR_MESSAGE } from "./../constants/global.js";
 
-export const copy = async (fromPath, toPath) => {
-  const copyFolderSync = (from, to) => {
-    mkdirSync(to);
+export const copy = async (fromPath, toPath, fileName) => {
+  const copyFolderSync = (from, to, file) => {
+    if (!existsSync(to) || !lstatSync(to).isDirectory()) {
+      mkdirSync(to);
+    }
 
-    readdirSync(from).forEach((element) => {
-      if (lstatSync(path.join(from, element)).isFile()) {
-        copyFileSync(path.join(from, element), path.join(to, element));
-      } else {
-        copyFolderSync(path.join(from, element), path.join(to, element));
-      }
-    });
+    if (lstatSync(from).isFile()) {
+      cp(from, resolve(to, file));
+    } else {
+      readdirSync(from).forEach((element) => {
+        if (lstatSync(path.resolve(from, element)).isFile()) {
+          cp(path.resolve(from, element), path.resolve(to, element));
+        } else {
+          copyFolderSync(path.resolve(from, element), path.resolve(to, element), element);
+        }
+      });
+    }
   };
 
   try {
-    copyFolderSync(fromPath, toPath);
+    copyFolderSync(fromPath, toPath, fileName);
   } catch (err) {
-    throw new Error("FS operation failed");
+    console.error(GLOBAL_ERROR_MESSAGE + " " + err);
   }
 };

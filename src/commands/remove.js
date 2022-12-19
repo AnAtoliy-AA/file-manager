@@ -7,7 +7,7 @@ export const remove = async (filePath) => {
         if (err) throw err;
         console.log("File is removed successfully.");
       });
-    } else throw Error("FS operation failed");
+    }
   } catch (err) {
     console.error(err);
   }
