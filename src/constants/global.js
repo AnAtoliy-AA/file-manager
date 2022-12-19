@@ -28,6 +28,8 @@ export const EXIT_MESSAGE = "\nThank you for using File Manager, ";
 export const DIRECTORY_IS_NOT_EXIST = '\nPlease, check destination directory name\n';
 export const USERNAME_ERROR = '\nPlease, enter correct user name!\n';
 export const GLOBAL_ERROR_MESSAGE = '\nFOUNDED NEW ERROR!: ';
+export const COMPRESSED = '\nCompressed successfully!';
+export const DECOMPRESSED = '\nDecompressed successfully!';
 
 export const FILE_VARIANTS = {
     DIRECTORY: "directory",

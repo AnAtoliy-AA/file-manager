@@ -133,13 +133,13 @@ export async function runCommandSelector(userName) {
         break;
 
       case COMPRESS:
-        compress(resolve(currentDirectory, params));
+        compress(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
 
         console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
 
       case DECOMPRESS:
-        decompress(resolve(currentDirectory, params));
+        decompress(resolve(currentDirectory, firstParam), resolve(currentDirectory, secondParam));
 
         console.log(CURRENT_PATH_MESSAGE + currentDirectory);
         break;
