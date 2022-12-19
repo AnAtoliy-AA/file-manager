@@ -30,6 +30,10 @@ export const USERNAME_ERROR = '\nPlease, enter correct user name!\n';
 export const GLOBAL_ERROR_MESSAGE = '\nFOUNDED NEW ERROR!: ';
 export const COMPRESSED = '\nCompressed successfully!';
 export const DECOMPRESSED = '\nDecompressed successfully!';
+export const REMOVED = '\nRemoved successfully!';
+export const RENAMED = '\nRenamed successfully!';
+export const EXIST_ERROR = '\nAlready exist!\n';
+export const NOT_EXIST_ERROR = '\nWas not found!\n';
 
 export const FILE_VARIANTS = {
     DIRECTORY: "directory",
